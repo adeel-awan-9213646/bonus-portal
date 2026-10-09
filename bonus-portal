@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartBrains BPO - Dialer Team Bonus Portal</title>
+    <style>
+        :root {
+            --primary-blue: #0d47a1;
+            --accent-blue: #1976d2;
+            --light-bg: #f4f7fc;
+            --card-bg: #ffffff;
+            --gold-accent: #ffb300;
+            --green-success: #2e7d32;
+            --border-color: #e0e0e0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: #333333;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .portal-container {
+            width: 100%;
+            max-width: 1000px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Header Area */
+        .portal-header {
+            background: linear-gradient(135deg, #0a2540 0%, #0d47a1 100%);
+            color: #ffffff;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .portal-header h1 {
+            font-size: 32px;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+        }
+
+        .portal-header p {
+            font-size: 15px;
+            color: #90caf9;
+            margin-top: 6px;
+            font-weight: 600;
+        }
+
+        /* Campaign Selector Tabs */
+        .campaign-tabs {
+            display: flex;
+            gap: 12px;
+            background: #e3f2fd;
+            padding: 8px;
+            border-radius: 14px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 14px 10px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            background: transparent;
+            color: var(--primary-blue);
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .tab-btn span.sub {
+            font-size: 12px;
+            font-weight: 600;
+            opacity: 0.8;
+        }
+
+        .tab-btn.active {
+            background: var(--primary-blue);
+            color: #ffffff;
+            box-shadow: 0 4px 10px rgba(13, 71, 161, 0.3);
+        }
+
+        /* Cards Layout */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--primary-blue);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Form Styling */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .form-group label {
+            font-size: 14px;
+            font-weight: 700;
+            color: #555555;
+        }
+
+        .form-control {
+            padding: 12px 14px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-blue);
+        }
+
+        .btn-submit {
+            background: var(--primary-blue);
+            color: #ffffff;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+        }
+
+        .btn-submit:hover {
+            background: #0a3880;
+        }
+
+        /* Target Metric Badges */
+        .metric-badge {
+            background: #f5f5f5;
+            padding: 12px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .metric-badge .lbl {
+            font-size: 13px;
+            font-weight: 700;
+            color: #666;
+        }
+
+        .metric-badge .val {
+            font-size: 18px;
+            font-weight: 900;
+            color: var(--primary-blue);
+        }
+
+        /* Result Display Box */
+        .result-box {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border: 2px solid #a5d6a7;
+            padding: 18px;
+            border-radius: 14px;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .result-box .level-tag {
+            font-size: 14px;
+            font-weight: 800;
+            color: #2e7d32;
+            text-transform: uppercase;
+        }
+
+        .result-box .bonus-val {
+            font-size: 32px;
+            font-weight: 900;
+            color: #1b5e20;
+            margin: 6px 0;
+        }
+
+        /* Tables for Slab Reference */
+        .slab-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .slab-table th, .slab-table td {
+            padding: 8px 10px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .slab-table th {
+            background: #e3f2fd;
+            color: var(--primary-blue);
+            font-weight: 800;
+        }
+
+        .slab-table tr.active-row {
+            background-color: #fff9c4 !important;
+            font-weight: 900;
+        }
+
+        /* History Table */
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .history-table th, .history-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .history-table th {
+            background: #f5f5f5;
+            font-weight: 800;
+        }
+
+        .badge-level {
+            background: #ffecb3;
+            color: #b78103;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: 800;
+            font-size: 12px;
+        }
+
+        .footer-note {
+            text-align: center;
+            font-size: 12px;
+            color: #888888;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<div class="portal-container">
+    <!-- Header -->
+    <div class="portal-header">
+        <h1>SmartBrains BPO</h1>
+        <p>Dialer Team Bonus & Performance Incentive Portal</p>
+    </div>
+
+    <!-- Campaign Selector Tabs -->
+    <div class="campaign-tabs">
+        <button class="tab-btn active" onclick="switchCampaign('ACA', this)">
+            ACA
+            <span class="sub">Adeel Awan / Laiba</span>
+        </button>
+        <button class="tab-btn" onclick="switchCampaign('HI', this)">
+            HI
+            <span class="sub">Mahanoor</span>
+        </button>
+        <button class="tab-btn" onclick="switchCampaign('Medicare', this)">
+            Medicare
+            <span class="sub">Hamza / Tayyab</span>
+        </button>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="grid-2">
+        <!-- Daily Sales Entry Form -->
+        <div class="card">
+            <div class="card-title">
+                📊 Record Daily Sales
+            </div>
+
+            <div class="metric-badge">
+                <span class="lbl">Daily Target Goal</span>
+                <span class="val" id="dispDailyGoal">831 Sales</span>
+            </div>
+
+            <div class="metric-badge">
+                <span class="lbl">Monthly Target Goal</span>
+                <span class="val" id="dispMonthlyGoal">18,282 Sales</span>
+            </div>
+
+            <div class="form-group">
+                <label for="saleDate">Select Date</label>
+                <input type="date" id="saleDate" class="form-control" value="2026-11-01">
+            </div>
+
+            <div class="form-group">
+                <label for="dailySalesInput">Enter Achieved Sales Count</label>
+                <input type="number" id="dailySalesInput" class="form-control" placeholder="e.g. 950" oninput="calculateBonusLive()">
+            </div>
+
+            <button class="btn-submit" onclick="saveSalesRecord()">Save Sales Record</button>
+
+            <!-- Dynamic Result Box -->
+            <div class="result-box" id="resultContainer">
+                <div class="level-tag" id="resLevelTag">Level Not Achieved</div>
+                <div class="bonus-val" id="resBonusVal">Rs. 0</div>
+                <div style="font-size: 13px; font-weight: 700; color: #555;" id="resMsg">Enter sales above Level 1 slab to unlock bonus!</div>
+            </div>
+        </div>
+
+        <!-- Bonus Slab Reference -->
+        <div class="card">
+            <div class="card-title">
+                🏆 Daily Incentive Slab (Current Campaign)
+            </div>
+            <div style="max-height: 380px; overflow-y: auto;">
+                <table class="slab-table">
+                    <thead>
+                        <tr>
+                            <th>Level</th>
+                            <th>Min Sales</th>
+                            <th>Bonus Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="slabTableBody">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Monthly Accumulated History Card -->
+    <div class="card">
+        <div class="card-title">
+            🗓️ Recorded Sales History & Total Earned Bonus
+        </div>
+        <table class="history-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Campaign</th>
+                    <th>Sales Achieved</th>
+                    <th>Level</th>
+                    <th>Earned Bonus</th>
+                </tr>
+            </thead>
+            <tbody id="historyTableBody">
+                <!-- Recorded Rows -->
+            </tbody>
+        </table>
+    </div>
+
+    <div class="footer-note">
+        SmartBrains BPO Confidential - For Internal Team Use Only | Developed for Adeel Awan
+    </div>
+</div>
+
+<script>
+    // Campaign Slabs Data matching exact SmartBrains BPO Incentive Image
+    const campaignConfig = {
+        ACA: {
+            dialer: "Adeel Awan / Laiba",
+            monthlyGoal: 18282,
+            dailyGoal: 831,
+            slabs: [
+                { level: "Level 1", target: 800, bonus: 5000 },
+                { level: "Level 2", target: 850, bonus: 6000 },
+                { level: "Level 3", target: 900, bonus: 7000 },
+                { level: "Level 4", target: 950, bonus: 8000 },
+                { level: "Level 5", target: 1000, bonus: 9000 },
+                { level: "Level 6", target: 1050, bonus: 10000 },
+                { level: "Level 7", target: 1100, bonus: 11000 },
+                { level: "Level 8", target: 1150, bonus: 12000 },
+                { level: "Level 9", target: 1200, bonus: 13000 },
+                { level: "Level 10", target: 1250, bonus: 14000 }
+            ]
+        },
+        HI: {
+            dialer: "Mahanoor",
+            monthlyGoal: 9328,
+            dailyGoal: 424,
+            slabs: [
+                { level: "Level 1", target: 400, bonus: 5000 },
+                { level: "Level 2", target: 450, bonus: 6000 },
+                { level: "Level 3", target: 500, bonus: 7000 },
+                { level: "Level 4", target: 550, bonus: 8000 },
+                { level: "Level 5", target: 600, bonus: 9000 },
+                { level: "Level 6", target: 650, bonus: 10000 },
+                { level: "Level 7", target: 700, bonus: 11000 },
+                { level: "Level 8", target: 750, bonus: 12000 },
+                { level: "Level 9", target: 800, bonus: 13000 },
+                { level: "Level 10", target: 850, bonus: 14000 }
+            ]
+        },
+        Medicare: {
+            dialer: "Hamza / Tayyab",
+            monthlyGoal: 45540,
+            dailyGoal: 2070,
+            slabs: [
+                { level: "Level 1", target: 2100, bonus: 5000 },
+                { level: "Level 2", target: 2300, bonus: 6000 },
+                { level: "Level 3", target: 2500, bonus: 7000 },
+                { level: "Level 4", target: 2700, bonus: 8000 },
+                { level: "Level 5", target: 2900, bonus: 9000 },
+                { level: "Level 6", target: 3100, bonus: 10000 },
+                { level: "Level 7", target: 3300, bonus: 11000 },
+                { level: "Level 8", target: 3500, bonus: 12000 },
+                { level: "Level 9", target: 3700, bonus: 13000 },
+                { level: "Level 10", target: 3900, bonus: 14000 }
+            ]
+        }
+    };
+
+    let activeCampaign = "ACA";
+    let salesRecords = [];
+
+    function switchCampaign(campName, btnElement) {
+        activeCampaign = campName;
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btnElement.classList.add('active');
+
+        // Update Target Labels
+        const cfg = campaignConfig[activeCampaign];
+        document.getElementById('dispDailyGoal').innerText = cfg.dailyGoal.toLocaleString() + " Sales";
+        document.getElementById('dispMonthlyGoal').innerText = cfg.monthlyGoal.toLocaleString() + " Sales";
+
+        renderSlabTable();
+        calculateBonusLive();
+    }
+
+    function renderSlabTable(activeLevelName = null) {
+        const tbody = document.getElementById('slabTableBody');
+        tbody.innerHTML = '';
+        const slabs = campaignConfig[activeCampaign].slabs;
+
+        slabs.forEach(s => {
+            const tr = document.createElement('tr');
+            if (activeLevelName === s.level) {
+                tr.className = 'active-row';
+            }
+            tr.innerHTML = `
+                <td><strong>${s.level}</strong></td>
+                <td>${s.target.toLocaleString()}</td>
+                <td>Rs. ${s.bonus.toLocaleString()}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function calculateBonusLive() {
+        const inputVal = parseInt(document.getElementById('dailySalesInput').value) || 0;
+        const slabs = campaignConfig[activeCampaign].slabs;
+
+        let unlockedSlab = null;
+        for (let i = slabs.length - 1; i >= 0; i--) {
+            if (inputVal >= slabs[i].target) {
+                unlockedSlab = slabs[i];
+                break;
+            }
+        }
+
+        if (unlockedSlab) {
+            document.getElementById('resLevelTag').innerText = "🎉 " + unlockedSlab.level + " Unlocked!";
+            document.getElementById('resBonusVal').innerText = "Rs. " + unlockedSlab.bonus.toLocaleString();
+            document.getElementById('resMsg').innerText = `Congratulations! You achieved ${inputVal} sales today.`;
+            renderSlabTable(unlockedSlab.level);
+        } else {
+            document.getElementById('resLevelTag').innerText = "Level Not Achieved";
+            document.getElementById('resBonusVal').innerText = "Rs. 0";
+            document.getElementById('resMsg').innerText = `Minimum ${slabs[0].target} sales needed for Level 1 bonus.`;
+            renderSlabTable(null);
+        }
+    }
+
+    function saveSalesRecord() {
+        const dateVal = document.getElementById('saleDate').value;
+        const inputVal = parseInt(document.getElementById('dailySalesInput').value) || 0;
+
+        if (!dateVal || inputVal <= 0) {
+            alert("Please select a date and enter valid sales count.");
+            return;
+        }
+
+        const slabs = campaignConfig[activeCampaign].slabs;
+        let unlockedSlab = null;
+        for (let i = slabs.length - 1; i >= 0; i--) {
+            if (inputVal >= slabs[i].target) {
+                unlockedSlab = slabs[i];
+                break;
+            }
+        }
+
+        salesRecords.push({
+            date: dateVal,
+            campaign: activeCampaign,
+            sales: inputVal,
+            level: unlockedSlab ? unlockedSlab.level : "Below L1",
+            bonus: unlockedSlab ? unlockedSlab.bonus : 0
+        });
+
+        renderHistoryTable();
+        alert("Sales record saved successfully!");
+    }
+
+    function renderHistoryTable() {
+        const tbody = document.getElementById('historyTableBody');
+        tbody.innerHTML = '';
+
+        if (salesRecords.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 15px;">No records added yet.</td></tr>`;
+            return;
+        }
+
+        salesRecords.forEach(rec => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>${rec.date}</strong></td>
+                <td>${rec.campaign}</td>
+                <td>${rec.sales.toLocaleString()}</td>
+                <td><span class="badge-level">${rec.level}</span></td>
+                <td style="color: #2e7d32; font-weight: 800;">Rs. ${rec.bonus.toLocaleString()}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // Initialize Page
+    switchCampaign('ACA', document.querySelectorAll('.tab-btn')[0]);
+</script>
+
+</body>
+</html>
