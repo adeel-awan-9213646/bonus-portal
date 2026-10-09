@@ -10,9 +10,7 @@
             --accent-blue: #1976d2;
             --light-bg: #f4f7fc;
             --card-bg: #ffffff;
-            --gold-accent: #ffb300;
-            --green-success: #2e7d32;
-            --border-color: #e0e0e0;
+            --border-color: #dcdcdc;
         }
 
         * {
@@ -117,7 +115,7 @@
             border-radius: 16px;
             padding: 20px;
             border: 1px solid var(--border-color);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
 
         .card-title {
@@ -128,6 +126,8 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            border-bottom: 2px solid #e3f2fd;
+            padding-bottom: 8px;
         }
 
         /* Form Styling */
@@ -223,22 +223,34 @@
         }
 
         /* Tables for Slab Reference */
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            max-height: 380px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+        }
+
         .slab-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 13px;
+            font-size: 14px;
+            background: white;
         }
 
         .slab-table th, .slab-table td {
-            padding: 8px 10px;
+            padding: 10px 12px;
             text-align: center;
             border-bottom: 1px solid var(--border-color);
         }
 
         .slab-table th {
-            background: #e3f2fd;
-            color: var(--primary-blue);
+            background: #0d47a1;
+            color: #ffffff;
             font-weight: 800;
+            position: sticky;
+            top: 0;
         }
 
         .slab-table tr.active-row {
@@ -247,22 +259,41 @@
         }
 
         /* History Table */
+        .history-table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+        }
+
         .history-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
             font-size: 14px;
+            background: white;
         }
 
         .history-table th, .history-table td {
-            padding: 10px;
+            padding: 12px;
             text-align: left;
             border-bottom: 1px solid var(--border-color);
         }
 
         .history-table th {
-            background: #f5f5f5;
+            background: #f1f5f9;
+            color: #0d47a1;
             font-weight: 800;
+        }
+
+        .history-table tfoot tr {
+            background-color: #0d47a1;
+            color: #ffffff;
+            font-weight: 900;
+        }
+
+        .history-table tfoot td {
+            padding: 14px 12px;
+            font-size: 16px;
         }
 
         .badge-level {
@@ -333,7 +364,7 @@
 
             <div class="form-group">
                 <label for="dailySalesInput">Enter Achieved Sales Count</label>
-                <input type="number" id="dailySalesInput" class="form-control" placeholder="e.g. 950" oninput="calculateBonusLive()">
+                <input type="number" id="dailySalesInput" class="form-control" placeholder="e.g. 1300" oninput="calculateBonusLive()">
             </div>
 
             <button class="btn-submit" onclick="saveSalesRecord()">Save Sales Record</button>
@@ -351,7 +382,7 @@
             <div class="card-title">
                 🏆 Daily Incentive Slab (Current Campaign)
             </div>
-            <div style="max-height: 380px; overflow-y: auto;">
+            <div class="table-wrapper">
                 <table class="slab-table">
                     <thead>
                         <tr>
@@ -361,7 +392,7 @@
                         </tr>
                     </thead>
                     <tbody id="slabTableBody">
-                        <!-- Populated by JS -->
+                        <!-- Dynamic Slabs -->
                     </tbody>
                 </table>
             </div>
@@ -373,34 +404,47 @@
         <div class="card-title">
             🗓️ Recorded Sales History & Total Earned Bonus
         </div>
-        <table class="history-table">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Campaign</th>
-                    <th>Sales Achieved</th>
-                    <th>Level</th>
-                    <th>Earned Bonus</th>
-                </tr>
-            </thead>
-            <tbody id="historyTableBody">
-                <!-- Recorded Rows -->
-            </tbody>
-        </table>
+        <div class="history-table-wrapper">
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Campaign</th>
+                        <th>Sales Achieved</th>
+                        <th>Level</th>
+                        <th>Earned Bonus</th>
+                    </tr>
+                </thead>
+                <tbody id="historyTableBody">
+                    <!-- History Rows -->
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="2">TOTAL ACCUMULATED</td>
+                        <td id="totalSalesSum">0</td>
+                        <td>-</td>
+                        <td id="totalBonusSum">Rs. 0</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
     </div>
 
     <div class="footer-note">
-        SmartBrains BPO Confidential - For Internal Team Use Only | Developed for Adeel Awan
+        SmartBrains BPO Confidential - For Internal Team Use Only | Developed by Adeel Awan
     </div>
 </div>
 
 <script>
-    // Campaign Slabs Data matching exact SmartBrains BPO Incentive Image
     const campaignConfig = {
         ACA: {
             dialer: "Adeel Awan / Laiba",
             monthlyGoal: 18282,
             dailyGoal: 831,
+            baseTarget: 800,
+            stepSales: 50,
+            baseBonus: 5000,
+            stepBonus: 1000,
             slabs: [
                 { level: "Level 1", target: 800, bonus: 5000 },
                 { level: "Level 2", target: 850, bonus: 6000 },
@@ -418,6 +462,10 @@
             dialer: "Mahanoor",
             monthlyGoal: 9328,
             dailyGoal: 424,
+            baseTarget: 400,
+            stepSales: 50,
+            baseBonus: 5000,
+            stepBonus: 1000,
             slabs: [
                 { level: "Level 1", target: 400, bonus: 5000 },
                 { level: "Level 2", target: 450, bonus: 6000 },
@@ -435,6 +483,10 @@
             dialer: "Hamza / Tayyab",
             monthlyGoal: 45540,
             dailyGoal: 2070,
+            baseTarget: 2100,
+            stepSales: 200,
+            baseBonus: 5000,
+            stepBonus: 1000,
             slabs: [
                 { level: "Level 1", target: 2100, bonus: 5000 },
                 { level: "Level 2", target: 2300, bonus: 6000 },
@@ -456,9 +508,8 @@
     function switchCampaign(campName, btnElement) {
         activeCampaign = campName;
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        btnElement.classList.add('active');
+        if(btnElement) btnElement.classList.add('active');
 
-        // Update Target Labels
         const cfg = campaignConfig[activeCampaign];
         document.getElementById('dispDailyGoal').innerText = cfg.dailyGoal.toLocaleString() + " Sales";
         document.getElementById('dispMonthlyGoal').innerText = cfg.monthlyGoal.toLocaleString() + " Sales";
@@ -467,10 +518,38 @@
         calculateBonusLive();
     }
 
+    function getDynamicLevel(sales) {
+        const cfg = campaignConfig[activeCampaign];
+        if (sales < cfg.baseTarget) return null;
+
+        const steps = Math.floor((sales - cfg.baseTarget) / cfg.stepSales);
+        const levelNum = steps + 1;
+        const target = cfg.baseTarget + (steps * cfg.stepSales);
+        const bonus = cfg.baseBonus + (steps * cfg.stepBonus);
+
+        return {
+            level: "Level " + levelNum,
+            target: target,
+            bonus: bonus
+        };
+    }
+
     function renderSlabTable(activeLevelName = null) {
         const tbody = document.getElementById('slabTableBody');
+        if(!tbody) return;
         tbody.innerHTML = '';
-        const slabs = campaignConfig[activeCampaign].slabs;
+        
+        let slabs = JSON.parse(JSON.stringify(campaignConfig[activeCampaign].slabs));
+
+        // Extended view if higher level unlocked
+        const inputVal = parseInt(document.getElementById('dailySalesInput').value) || 0;
+        const dynamicObj = getDynamicLevel(inputVal);
+        if (dynamicObj && dynamicObj.bonus > 14000) {
+            let exists = slabs.some(s => s.level === dynamicObj.level);
+            if (!exists) {
+                slabs.push(dynamicObj);
+            }
+        }
 
         slabs.forEach(s => {
             const tr = document.createElement('tr');
@@ -488,15 +567,7 @@
 
     function calculateBonusLive() {
         const inputVal = parseInt(document.getElementById('dailySalesInput').value) || 0;
-        const slabs = campaignConfig[activeCampaign].slabs;
-
-        let unlockedSlab = null;
-        for (let i = slabs.length - 1; i >= 0; i--) {
-            if (inputVal >= slabs[i].target) {
-                unlockedSlab = slabs[i];
-                break;
-            }
-        }
+        const unlockedSlab = getDynamicLevel(inputVal);
 
         if (unlockedSlab) {
             document.getElementById('resLevelTag').innerText = "🎉 " + unlockedSlab.level + " Unlocked!";
@@ -504,9 +575,10 @@
             document.getElementById('resMsg').innerText = `Congratulations! You achieved ${inputVal} sales today.`;
             renderSlabTable(unlockedSlab.level);
         } else {
+            const cfg = campaignConfig[activeCampaign];
             document.getElementById('resLevelTag').innerText = "Level Not Achieved";
             document.getElementById('resBonusVal').innerText = "Rs. 0";
-            document.getElementById('resMsg').innerText = `Minimum ${slabs[0].target} sales needed for Level 1 bonus.`;
+            document.getElementById('resMsg').innerText = `Minimum ${cfg.baseTarget} sales needed for Level 1 bonus.`;
             renderSlabTable(null);
         }
     }
@@ -520,14 +592,7 @@
             return;
         }
 
-        const slabs = campaignConfig[activeCampaign].slabs;
-        let unlockedSlab = null;
-        for (let i = slabs.length - 1; i >= 0; i--) {
-            if (inputVal >= slabs[i].target) {
-                unlockedSlab = slabs[i];
-                break;
-            }
-        }
+        const unlockedSlab = getDynamicLevel(inputVal);
 
         salesRecords.push({
             date: dateVal,
@@ -543,14 +608,23 @@
 
     function renderHistoryTable() {
         const tbody = document.getElementById('historyTableBody');
+        if(!tbody) return;
         tbody.innerHTML = '';
+
+        let grandTotalSales = 0;
+        let grandTotalBonus = 0;
 
         if (salesRecords.length === 0) {
             tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 15px;">No records added yet.</td></tr>`;
+            document.getElementById('totalSalesSum').innerText = "0";
+            document.getElementById('totalBonusSum').innerText = "Rs. 0";
             return;
         }
 
         salesRecords.forEach(rec => {
+            grandTotalSales += rec.sales;
+            grandTotalBonus += rec.bonus;
+
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td><strong>${rec.date}</strong></td>
@@ -561,10 +635,17 @@
             `;
             tbody.appendChild(tr);
         });
+
+        // Update Total Summary
+        document.getElementById('totalSalesSum').innerText = grandTotalSales.toLocaleString();
+        document.getElementById('totalBonusSum').innerText = "Rs. " + grandTotalBonus.toLocaleString();
     }
 
-    // Initialize Page
-    switchCampaign('ACA', document.querySelectorAll('.tab-btn')[0]);
+    // Initialize Page on Load
+    window.onload = function() {
+        switchCampaign('ACA', document.querySelectorAll('.tab-btn')[0]);
+        renderHistoryTable();
+    };
 </script>
 
 </body>
