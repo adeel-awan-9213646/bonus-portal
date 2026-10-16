@@ -388,7 +388,7 @@
         <div class="card">
             <div class="card-header-flex">
                 <div class="card-title">
-                    📊 Record Daily Sales (<span id="activeCampTitle">ACA</span>)
+                    📊 Record Daily Sales ( <span id="activeCampTitle">ACA</span> )
                 </div>
             </div>
 
@@ -426,7 +426,7 @@
         <div class="card">
             <div class="card-header-flex">
                 <div class="card-title">
-                    🏆 Daily Incentive Slab (<span id="activeSlabTitle">ACA</span>)
+                    🏆 Daily Incentive Slab ( <span id="activeSlabTitle">ACA</span> )
                 </div>
             </div>
             <div class="table-wrapper">
@@ -450,7 +450,7 @@
     <div class="card">
         <div class="card-header-flex">
             <div class="card-title">
-                🗓️ Recorded Sales History & Total Earned Bonus
+                🗓️ Recorded Sales History & Total Earned Bonus ( <span id="activeHistTitle">ACA</span> )
             </div>
             <button class="btn-export" onclick="exportCSV()">📥 Backup CSV</button>
         </div>
@@ -474,4 +474,324 @@
                         <td colspan="2">TOTAL ACCUMULATED</td>
                         <td id="totalSalesSum">0</td>
                         <td>-</td>
-                        <td id="total
+                        <td id="totalBonusSum">Rs. 0</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <div class="footer-note">
+        SmartBrains BPO Confidential - Permanent Data Storage Enabled | Developed by Adeel Awan
+    </div>
+</div>
+
+<script>
+    const campaignConfig = {
+        ACA: {
+            dialer: "Adeel Awan / Laiba",
+            monthlyGoal: 18282,
+            dailyGoal: 831,
+            baseTarget: 800,
+            stepSales: 50,
+            baseBonus: 5000,
+            stepBonus: 1000,
+            slabs: [
+                { level: "Level 1", target: 800, bonus: 5000 },
+                { level: "Level 2", target: 850, bonus: 6000 },
+                { level: "Level 3", target: 900, bonus: 7000 },
+                { level: "Level 4", target: 950, bonus: 8000 },
+                { level: "Level 5", target: 1000, bonus: 9000 },
+                { level: "Level 6", target: 1050, bonus: 10000 },
+                { level: "Level 7", target: 1100, bonus: 11000 },
+                { level: "Level 8", target: 1150, bonus: 12000 },
+                { level: "Level 9", target: 1200, bonus: 13000 },
+                { level: "Level 10", target: 1250, bonus: 14000 }
+            ]
+        },
+        HI: {
+            dialer: "Mahanoor",
+            monthlyGoal: 9328,
+            dailyGoal: 424,
+            baseTarget: 400,
+            stepSales: 50,
+            baseBonus: 5000,
+            stepBonus: 1000,
+            slabs: [
+                { level: "Level 1", target: 400, bonus: 5000 },
+                { level: "Level 2", target: 450, bonus: 6000 },
+                { level: "Level 3", target: 500, bonus: 7000 },
+                { level: "Level 4", target: 550, bonus: 8000 },
+                { level: "Level 5", target: 600, bonus: 9000 },
+                { level: "Level 6", target: 650, bonus: 10000 },
+                { level: "Level 7", target: 700, bonus: 11000 },
+                { level: "Level 8", target: 750, bonus: 12000 },
+                { level: "Level 9", target: 800, bonus: 13000 },
+                { level: "Level 10", target: 850, bonus: 14000 }
+            ]
+        },
+        Medicare: {
+            dialer: "Hamza / Tayyab",
+            monthlyGoal: 45540,
+            dailyGoal: 2070,
+            baseTarget: 2100,
+            stepSales: 200,
+            baseBonus: 5000,
+            stepBonus: 1000,
+            slabs: [
+                { level: "Level 1", target: 2100, bonus: 5000 },
+                { level: "Level 2", target: 2300, bonus: 6000 },
+                { level: "Level 3", target: 2500, bonus: 7000 },
+                { level: "Level 4", target: 2700, bonus: 8000 },
+                { level: "Level 5", target: 2900, bonus: 9000 },
+                { level: "Level 6", target: 3100, bonus: 10000 },
+                { level: "Level 7", target: 3300, bonus: 11000 },
+                { level: "Level 8", target: 3500, bonus: 12000 },
+                { level: "Level 9", target: 3700, bonus: 13000 },
+                { level: "Level 10", target: 3900, bonus: 14000 }
+            ]
+        }
+    };
+
+    let activeCampaign = "ACA";
+    let salesRecords = [];
+
+    function loadSavedRecords() {
+        const saved = localStorage.getItem('smartbrains_sales_history_v2');
+        if (saved) {
+            try {
+                salesRecords = JSON.parse(saved);
+            } catch(e) {
+                salesRecords = [];
+            }
+        }
+    }
+
+    function saveRecordsToStorage() {
+        localStorage.setItem('smartbrains_sales_history_v2', JSON.stringify(salesRecords));
+    }
+
+    function switchCampaign(campName, btnElement) {
+        activeCampaign = campName;
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        if(btnElement) btnElement.classList.add('active');
+
+        document.getElementById('activeCampTitle').innerText = activeCampaign;
+        document.getElementById('activeSlabTitle').innerText = activeCampaign;
+        document.getElementById('activeHistTitle').innerText = activeCampaign;
+
+        const cfg = campaignConfig[activeCampaign];
+        document.getElementById('dispDailyGoal').innerText = cfg.dailyGoal.toLocaleString() + " Sales";
+        document.getElementById('dispMonthlyGoal').innerText = cfg.monthlyGoal.toLocaleString() + " Sales";
+
+        renderSlabTable();
+        calculateBonusLive();
+        renderHistoryTable();
+    }
+
+    function getDynamicLevelForCamp(camp, sales) {
+        const cfg = campaignConfig[camp];
+        if (!cfg || sales < cfg.baseTarget) return null;
+
+        const steps = Math.floor((sales - cfg.baseTarget) / cfg.stepSales);
+        const levelNum = steps + 1;
+        const target = cfg.baseTarget + (steps * cfg.stepSales);
+        const bonus = cfg.baseBonus + (steps * cfg.stepBonus);
+
+        return {
+            level: "Level " + levelNum,
+            target: target,
+            bonus: bonus
+        };
+    }
+
+    function getDynamicLevel(sales) {
+        return getDynamicLevelForCamp(activeCampaign, sales);
+    }
+
+    function renderSlabTable(activeLevelName = null) {
+        const tbody = document.getElementById('slabTableBody');
+        if(!tbody) return;
+        tbody.innerHTML = '';
+        
+        let slabs = JSON.parse(JSON.stringify(campaignConfig[activeCampaign].slabs));
+
+        const inputVal = parseInt(document.getElementById('dailySalesInput').value) || 0;
+        const dynamicObj = getDynamicLevel(inputVal);
+        if (dynamicObj && dynamicObj.bonus > 14000) {
+            let exists = slabs.some(s => s.level === dynamicObj.level);
+            if (!exists) {
+                slabs.push(dynamicObj);
+            }
+        }
+
+        slabs.forEach(s => {
+            const tr = document.createElement('tr');
+            if (activeLevelName === s.level) {
+                tr.className = 'active-row';
+            }
+            tr.innerHTML = `
+                <td><strong>${s.level}</strong></td>
+                <td>${s.target.toLocaleString()}</td>
+                <td>Rs. ${s.bonus.toLocaleString()}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function calculateBonusLive() {
+        const inputVal = parseInt(document.getElementById('dailySalesInput').value) || 0;
+        const unlockedSlab = getDynamicLevel(inputVal);
+
+        if (unlockedSlab) {
+            document.getElementById('resLevelTag').innerText = "🎉 " + unlockedSlab.level + " Unlocked!";
+            document.getElementById('resBonusVal').innerText = "Rs. " + unlockedSlab.bonus.toLocaleString();
+            document.getElementById('resMsg').innerText = `Congratulations! You achieved ${inputVal} sales in ${activeCampaign}.`;
+            renderSlabTable(unlockedSlab.level);
+        } else {
+            const cfg = campaignConfig[activeCampaign];
+            document.getElementById('resLevelTag').innerText = "Level Not Achieved";
+            document.getElementById('resBonusVal').innerText = "Rs. 0";
+            document.getElementById('resMsg').innerText = `Minimum ${cfg.baseTarget} sales needed for Level 1 bonus in ${activeCampaign}.`;
+            renderSlabTable(null);
+        }
+    }
+
+    function saveSalesRecord() {
+        const dateVal = document.getElementById('saleDate').value;
+        const inputVal = parseInt(document.getElementById('dailySalesInput').value) || 0;
+
+        if (!dateVal || inputVal <= 0) {
+            alert("Please select a valid date and enter sales count.");
+            return;
+        }
+
+        const unlockedSlab = getDynamicLevel(inputVal);
+
+        salesRecords.push({
+            id: Date.now(),
+            date: dateVal,
+            campaign: activeCampaign,
+            sales: inputVal,
+            level: unlockedSlab ? unlockedSlab.level : "Below L1",
+            bonus: unlockedSlab ? unlockedSlab.bonus : 0
+        });
+
+        saveRecordsToStorage();
+        renderHistoryTable();
+        document.getElementById('dailySalesInput').value = '';
+        calculateBonusLive();
+        alert(`Sales record for ${activeCampaign} saved successfully!`);
+    }
+
+    function editRecord(recordId) {
+        const rec = salesRecords.find(r => r.id === recordId);
+        if (!rec) return;
+
+        const newDate = prompt("Edit Date (YYYY-MM-DD):", rec.date);
+        if (!newDate) return;
+
+        const newSales = prompt(`Edit sales count for ${newDate} (${rec.campaign}):`, rec.sales);
+        if (newSales !== null) {
+            const parsedVal = parseInt(newSales) || 0;
+            if (parsedVal > 0) {
+                rec.date = newDate;
+                rec.sales = parsedVal;
+                
+                const unlockedSlab = getDynamicLevelForCamp(rec.campaign, parsedVal);
+                rec.level = unlockedSlab ? unlockedSlab.level : "Below L1";
+                rec.bonus = unlockedSlab ? unlockedSlab.bonus : 0;
+
+                saveRecordsToStorage();
+                renderHistoryTable();
+            } else {
+                alert("Invalid sales count entered.");
+            }
+        }
+    }
+
+    function deleteRecord(recordId) {
+        if (confirm("Are you sure you want to delete this sales record?")) {
+            salesRecords = salesRecords.filter(r => r.id !== recordId);
+            saveRecordsToStorage();
+            renderHistoryTable();
+        }
+    }
+
+    function renderHistoryTable() {
+        const tbody = document.getElementById('historyTableBody');
+        if(!tbody) return;
+        tbody.innerHTML = '';
+
+        let grandTotalSales = 0;
+        let grandTotalBonus = 0;
+
+        // Filter history records ONLY for the active campaign
+        const filteredRecords = salesRecords.filter(r => r.campaign === activeCampaign);
+
+        if (filteredRecords.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 18px; font-weight:700; color:#777;">No records added yet for ${activeCampaign}.</td></tr>`;
+            document.getElementById('totalSalesSum').innerText = "0";
+            document.getElementById('totalBonusSum').innerText = "Rs. 0";
+            return;
+        }
+
+        filteredRecords.sort((a,b) => new Date(b.date) - new Date(a.date));
+
+        filteredRecords.forEach(rec => {
+            grandTotalSales += rec.sales;
+            grandTotalBonus += rec.bonus;
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>${rec.date}</strong></td>
+                <td><strong>${rec.campaign}</strong></td>
+                <td>${rec.sales.toLocaleString()}</td>
+                <td><span class="badge-level">${rec.level}</span></td>
+                <td style="color: #2e7d32; font-weight: 800;">Rs. ${rec.bonus.toLocaleString()}</td>
+                <td>
+                    <button class="btn-action btn-edit" onclick="editRecord(${rec.id})">✏️ Edit</button>
+                    <button class="btn-action btn-delete" onclick="deleteRecord(${rec.id})">🗑️ Clear</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        document.getElementById('totalSalesSum').innerText = grandTotalSales.toLocaleString();
+        document.getElementById('totalBonusSum').innerText = "Rs. " + grandTotalBonus.toLocaleString();
+    }
+
+    function exportCSV() {
+        const filteredRecords = salesRecords.filter(r => r.campaign === activeCampaign);
+
+        if (filteredRecords.length === 0) {
+            alert(`No data available to export for ${activeCampaign}.`);
+            return;
+        }
+
+        let csvContent = "data:text/csv;charset=utf-8,Date,Campaign,Sales,Level,Bonus\n";
+        filteredRecords.forEach(r => {
+            csvContent += `${r.date},${r.campaign},${r.sales},${r.level},${r.bonus}\n`;
+        });
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `${activeCampaign}_Sales_Bonus_History_Backup.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    window.onload = function() {
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('saleDate').value = today;
+
+        loadSavedRecords();
+        switchCampaign('ACA', document.querySelectorAll('.tab-btn')[0]);
+    };
+</script>
+
+</body>
+</html>
