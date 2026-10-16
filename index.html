@@ -30,7 +30,7 @@
 
         .portal-container {
             width: 100%;
-            max-width: 1050px;
+            max-width: 1150px;
             display: flex;
             flex-direction: column;
             gap: 20px;
@@ -204,6 +204,31 @@
             color: var(--primary-blue);
         }
 
+        /* Monthly Progress Tracker */
+        .progress-box {
+            margin-bottom: 15px;
+            background: #f0f7ff;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #bbdefb;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: #2e7d32;
+            transition: width 0.4s ease;
+        }
+
         /* Result Display Box */
         .result-box {
             background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
@@ -232,7 +257,7 @@
         .table-wrapper {
             width: 100%;
             overflow-x: auto;
-            max-height: 380px;
+            max-height: 440px;
             overflow-y: auto;
             border: 1px solid var(--border-color);
             border-radius: 10px;
@@ -299,12 +324,21 @@
 
         .history-table tfoot td {
             padding: 14px 12px;
-            font-size: 16px;
+            font-size: 15px;
         }
 
         .badge-level {
             background: #ffecb3;
             color: #b78103;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: 800;
+            font-size: 12px;
+        }
+
+        .badge-day {
+            background: #e1f5fe;
+            color: #0288d1;
             padding: 4px 8px;
             border-radius: 6px;
             font-weight: 800;
@@ -402,14 +436,30 @@
                 <span class="val" id="dispMonthlyGoal">18,282 Sales</span>
             </div>
 
+            <!-- Monthly Progress Tracker -->
+            <div class="progress-box">
+                <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:800; color:#0d47a1;">
+                    <span>Monthly Goal Progress (Approved)</span>
+                    <span id="monthlyPctText">0%</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" id="monthlyProgressFill"></div>
+                </div>
+            </div>
+
             <div class="form-group">
                 <label for="saleDate">Select Date</label>
                 <input type="date" id="saleDate" class="form-control">
             </div>
 
             <div class="form-group">
-                <label for="dailySalesInput">Enter Achieved Sales Count</label>
-                <input type="number" id="dailySalesInput" class="form-control" placeholder="e.g. 1300" oninput="calculateBonusLive()">
+                <label for="grossSalesInput">Enter Gross Sales Count</label>
+                <input type="number" id="grossSalesInput" class="form-control" placeholder="e.g. 1500">
+            </div>
+
+            <div class="form-group">
+                <label for="approvedSalesInput">Enter Approved Sales Count</label>
+                <input type="number" id="approvedSalesInput" class="form-control" placeholder="e.g. 1300" oninput="calculateBonusLive()">
             </div>
 
             <button class="btn-submit" onclick="saveSalesRecord()">Save Sales Record</button>
@@ -418,7 +468,7 @@
             <div class="result-box" id="resultContainer">
                 <div class="level-tag" id="resLevelTag">Level Not Achieved</div>
                 <div class="bonus-val" id="resBonusVal">Rs. 0</div>
-                <div style="font-size: 13px; font-weight: 700; color: #555;" id="resMsg">Enter sales above Level 1 slab to unlock bonus!</div>
+                <div style="font-size: 13px; font-weight: 700; color: #555;" id="resMsg">Enter approved sales above Level 1 slab to unlock bonus!</div>
             </div>
         </div>
 
@@ -459,8 +509,10 @@
                 <thead>
                     <tr>
                         <th>Date</th>
+                        <th>Day</th>
                         <th>Campaign</th>
-                        <th>Sales Achieved</th>
+                        <th>Gross Sales</th>
+                        <th>Approved Sales</th>
                         <th>Level</th>
                         <th>Earned Bonus</th>
                         <th>Actions</th>
@@ -471,8 +523,9 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td colspan="2">TOTAL ACCUMULATED</td>
-                        <td id="totalSalesSum">0</td>
+                        <td colspan="3">TOTAL ACCUMULATED</td>
+                        <td id="totalGrossSum">0</td>
+                        <td id="totalApprovedSum">0</td>
                         <td>-</td>
                         <td id="totalBonusSum">Rs. 0</td>
                         <td></td>
@@ -557,8 +610,18 @@
     let activeCampaign = "ACA";
     let salesRecords = [];
 
+    function getDayName(dateString) {
+        if(!dateString) return "";
+        const parts = dateString.split('-');
+        if(parts.length === 3) {
+            const d = new Date(parts[0], parts[1] - 1, parts[2]);
+            return d.toLocaleDateString('en-US', { weekday: 'long' });
+        }
+        return new Date(dateString).toLocaleDateString('en-US', { weekday: 'long' });
+    }
+
     function loadSavedRecords() {
-        const saved = localStorage.getItem('smartbrains_sales_history_v2');
+        const saved = localStorage.getItem('smartbrains_sales_history_v3');
         if (saved) {
             try {
                 salesRecords = JSON.parse(saved);
@@ -569,7 +632,7 @@
     }
 
     function saveRecordsToStorage() {
-        localStorage.setItem('smartbrains_sales_history_v2', JSON.stringify(salesRecords));
+        localStorage.setItem('smartbrains_sales_history_v3', JSON.stringify(salesRecords));
     }
 
     function switchCampaign(campName, btnElement) {
@@ -617,8 +680,8 @@
         
         let slabs = JSON.parse(JSON.stringify(campaignConfig[activeCampaign].slabs));
 
-        const inputVal = parseInt(document.getElementById('dailySalesInput').value) || 0;
-        const dynamicObj = getDynamicLevel(inputVal);
+        const appVal = parseInt(document.getElementById('approvedSalesInput').value) || 0;
+        const dynamicObj = getDynamicLevel(appVal);
         if (dynamicObj && dynamicObj.bonus > 14000) {
             let exists = slabs.some(s => s.level === dynamicObj.level);
             if (!exists) {
@@ -641,46 +704,50 @@
     }
 
     function calculateBonusLive() {
-        const inputVal = parseInt(document.getElementById('dailySalesInput').value) || 0;
-        const unlockedSlab = getDynamicLevel(inputVal);
+        const appVal = parseInt(document.getElementById('approvedSalesInput').value) || 0;
+        const unlockedSlab = getDynamicLevel(appVal);
 
         if (unlockedSlab) {
             document.getElementById('resLevelTag').innerText = "🎉 " + unlockedSlab.level + " Unlocked!";
             document.getElementById('resBonusVal').innerText = "Rs. " + unlockedSlab.bonus.toLocaleString();
-            document.getElementById('resMsg').innerText = `Congratulations! You achieved ${inputVal} sales in ${activeCampaign}.`;
+            document.getElementById('resMsg').innerText = `Congratulations! You achieved ${appVal} approved sales in ${activeCampaign}.`;
             renderSlabTable(unlockedSlab.level);
         } else {
             const cfg = campaignConfig[activeCampaign];
             document.getElementById('resLevelTag').innerText = "Level Not Achieved";
             document.getElementById('resBonusVal').innerText = "Rs. 0";
-            document.getElementById('resMsg').innerText = `Minimum ${cfg.baseTarget} sales needed for Level 1 bonus in ${activeCampaign}.`;
+            document.getElementById('resMsg').innerText = `Minimum ${cfg.baseTarget} approved sales needed for Level 1 bonus in ${activeCampaign}.`;
             renderSlabTable(null);
         }
     }
 
     function saveSalesRecord() {
         const dateVal = document.getElementById('saleDate').value;
-        const inputVal = parseInt(document.getElementById('dailySalesInput').value) || 0;
+        const grossVal = parseInt(document.getElementById('grossSalesInput').value) || 0;
+        const appVal = parseInt(document.getElementById('approvedSalesInput').value) || 0;
 
-        if (!dateVal || inputVal <= 0) {
-            alert("Please select a valid date and enter sales count.");
+        if (!dateVal || (grossVal <= 0 && appVal <= 0)) {
+            alert("Please select a valid date and enter sales numbers.");
             return;
         }
 
-        const unlockedSlab = getDynamicLevel(inputVal);
+        const unlockedSlab = getDynamicLevel(appVal);
 
         salesRecords.push({
             id: Date.now(),
             date: dateVal,
+            day: getDayName(dateVal),
             campaign: activeCampaign,
-            sales: inputVal,
+            grossSales: grossVal,
+            approvedSales: appVal,
             level: unlockedSlab ? unlockedSlab.level : "Below L1",
             bonus: unlockedSlab ? unlockedSlab.bonus : 0
         });
 
         saveRecordsToStorage();
         renderHistoryTable();
-        document.getElementById('dailySalesInput').value = '';
+        document.getElementById('grossSalesInput').value = '';
+        document.getElementById('approvedSalesInput').value = '';
         calculateBonusLive();
         alert(`Sales record for ${activeCampaign} saved successfully!`);
     }
@@ -692,22 +759,24 @@
         const newDate = prompt("Edit Date (YYYY-MM-DD):", rec.date);
         if (!newDate) return;
 
-        const newSales = prompt(`Edit sales count for ${newDate} (${rec.campaign}):`, rec.sales);
-        if (newSales !== null) {
-            const parsedVal = parseInt(newSales) || 0;
-            if (parsedVal > 0) {
-                rec.date = newDate;
-                rec.sales = parsedVal;
-                
-                const unlockedSlab = getDynamicLevelForCamp(rec.campaign, parsedVal);
-                rec.level = unlockedSlab ? unlockedSlab.level : "Below L1";
-                rec.bonus = unlockedSlab ? unlockedSlab.bonus : 0;
+        const newGross = prompt(`Edit Gross sales count for ${newDate} (${rec.campaign}):`, rec.grossSales || rec.sales || 0);
+        const newApproved = prompt(`Edit Approved sales count for ${newDate} (${rec.campaign}):`, rec.approvedSales || rec.sales || 0);
 
-                saveRecordsToStorage();
-                renderHistoryTable();
-            } else {
-                alert("Invalid sales count entered.");
-            }
+        if (newGross !== null && newApproved !== null) {
+            const parsedGross = parseInt(newGross) || 0;
+            const parsedApproved = parseInt(newApproved) || 0;
+
+            rec.date = newDate;
+            rec.day = getDayName(newDate);
+            rec.grossSales = parsedGross;
+            rec.approvedSales = parsedApproved;
+            
+            const unlockedSlab = getDynamicLevelForCamp(rec.campaign, parsedApproved);
+            rec.level = unlockedSlab ? unlockedSlab.level : "Below L1";
+            rec.bonus = unlockedSlab ? unlockedSlab.bonus : 0;
+
+            saveRecordsToStorage();
+            renderHistoryTable();
         }
     }
 
@@ -724,30 +793,39 @@
         if(!tbody) return;
         tbody.innerHTML = '';
 
-        let grandTotalSales = 0;
+        let grandTotalGross = 0;
+        let grandTotalApproved = 0;
         let grandTotalBonus = 0;
 
-        // Filter history records ONLY for the active campaign
         const filteredRecords = salesRecords.filter(r => r.campaign === activeCampaign);
 
         if (filteredRecords.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 18px; font-weight:700; color:#777;">No records added yet for ${activeCampaign}.</td></tr>`;
-            document.getElementById('totalSalesSum').innerText = "0";
+            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 18px; font-weight:700; color:#777;">No records added yet for ${activeCampaign}.</td></tr>`;
+            document.getElementById('totalGrossSum').innerText = "0";
+            document.getElementById('totalApprovedSum').innerText = "0";
             document.getElementById('totalBonusSum').innerText = "Rs. 0";
+            updateMonthlyProgress(0);
             return;
         }
 
         filteredRecords.sort((a,b) => new Date(b.date) - new Date(a.date));
 
         filteredRecords.forEach(rec => {
-            grandTotalSales += rec.sales;
+            const gSales = rec.grossSales !== undefined ? rec.grossSales : (rec.sales || 0);
+            const aSales = rec.approvedSales !== undefined ? rec.approvedSales : (rec.sales || 0);
+
+            grandTotalGross += gSales;
+            grandTotalApproved += aSales;
             grandTotalBonus += rec.bonus;
+            const dayName = rec.day || getDayName(rec.date);
 
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td><strong>${rec.date}</strong></td>
+                <td><span class="badge-day">${dayName}</span></td>
                 <td><strong>${rec.campaign}</strong></td>
-                <td>${rec.sales.toLocaleString()}</td>
+                <td>${gSales.toLocaleString()}</td>
+                <td><strong>${aSales.toLocaleString()}</strong></td>
                 <td><span class="badge-level">${rec.level}</span></td>
                 <td style="color: #2e7d32; font-weight: 800;">Rs. ${rec.bonus.toLocaleString()}</td>
                 <td>
@@ -758,8 +836,18 @@
             tbody.appendChild(tr);
         });
 
-        document.getElementById('totalSalesSum').innerText = grandTotalSales.toLocaleString();
+        document.getElementById('totalGrossSum').innerText = grandTotalGross.toLocaleString();
+        document.getElementById('totalApprovedSum').innerText = grandTotalApproved.toLocaleString();
         document.getElementById('totalBonusSum').innerText = "Rs. " + grandTotalBonus.toLocaleString();
+
+        updateMonthlyProgress(grandTotalApproved);
+    }
+
+    function updateMonthlyProgress(currentTotalApproved) {
+        const goal = campaignConfig[activeCampaign].monthlyGoal;
+        let pct = Math.min(100, Math.round((currentTotalApproved / goal) * 100));
+        document.getElementById('monthlyPctText').innerText = pct + "% (" + currentTotalApproved.toLocaleString() + " / " + goal.toLocaleString() + ")";
+        document.getElementById('monthlyProgressFill').style.width = pct + "%";
     }
 
     function exportCSV() {
@@ -770,15 +858,19 @@
             return;
         }
 
-        let csvContent = "data:text/csv;charset=utf-8,Date,Campaign,Sales,Level,Bonus\n";
+        let csvContent = "data:text/csv;charset=utf-8,Date,Day,Campaign,Gross Sales,Approved Sales,Level,Bonus Earned\n";
         filteredRecords.forEach(r => {
-            csvContent += `${r.date},${r.campaign},${r.sales},${r.level},${r.bonus}\n`;
+            const dayName = r.day || getDayName(r.date);
+            const gSales = r.grossSales !== undefined ? r.grossSales : (r.sales || 0);
+            const aSales = r.approvedSales !== undefined ? r.approvedSales : (r.sales || 0);
+
+            csvContent += `"${r.date}","${dayName}","${r.campaign}",${gSales},${aSales},"${r.level}",${r.bonus}\n`;
         });
 
         const encodedUri = encodeURI(csvContent);
         const link = document.createElement("a");
         link.setAttribute("href", encodedUri);
-        link.setAttribute("download", `${activeCampaign}_Sales_Bonus_History_Backup.csv`);
+        link.setAttribute("download", `${activeCampaign}_Sales_Bonus_History.csv`);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
