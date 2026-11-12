@@ -229,28 +229,47 @@
             transition: width 0.4s ease;
         }
 
-        /* Result Display Box */
-        .result-box {
-            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-            border: 2px solid #a5d6a7;
-            padding: 18px;
-            border-radius: 14px;
-            text-align: center;
+        /* Result Display Boxes (Dual Bonus Display) */
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
             margin-top: 15px;
         }
 
+        .result-box {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border: 2px solid #a5d6a7;
+            padding: 14px;
+            border-radius: 14px;
+            text-align: center;
+        }
+
+        .result-box.gross-box {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border: 2px solid #90caf9;
+        }
+
         .result-box .level-tag {
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 800;
             color: #2e7d32;
             text-transform: uppercase;
         }
 
+        .result-box.gross-box .level-tag {
+            color: #0d47a1;
+        }
+
         .result-box .bonus-val {
-            font-size: 32px;
+            font-size: 22px;
             font-weight: 900;
             color: #1b5e20;
-            margin: 6px 0;
+            margin: 4px 0;
+        }
+
+        .result-box.gross-box .bonus-val {
+            color: #0a2540;
         }
 
         /* Tables for Slab Reference */
@@ -324,7 +343,7 @@
 
         .history-table tfoot td {
             padding: 14px 12px;
-            font-size: 15px;
+            font-size: 14px;
         }
 
         .badge-level {
@@ -454,7 +473,7 @@
 
             <div class="form-group">
                 <label for="grossSalesInput">Enter Gross Sales Count</label>
-                <input type="number" id="grossSalesInput" class="form-control" placeholder="e.g. 1500">
+                <input type="number" id="grossSalesInput" class="form-control" placeholder="e.g. 1500" oninput="calculateBonusLive()">
             </div>
 
             <div class="form-group">
@@ -464,11 +483,16 @@
 
             <button class="btn-submit" onclick="saveSalesRecord()">Save Sales Record</button>
 
-            <!-- Dynamic Result Box -->
-            <div class="result-box" id="resultContainer">
-                <div class="level-tag" id="resLevelTag">Level Not Achieved</div>
-                <div class="bonus-val" id="resBonusVal">Rs. 0</div>
-                <div style="font-size: 13px; font-weight: 700; color: #555;" id="resMsg">Enter approved sales above Level 1 slab to unlock bonus!</div>
+            <!-- Dual Dynamic Result Boxes (Approved & Gross Bonus Preview) -->
+            <div class="results-grid">
+                <div class="result-box">
+                    <div class="level-tag" id="resApprovedLevelTag">Approved: Below L1</div>
+                    <div class="bonus-val" id="resApprovedBonusVal">Rs. 0</div>
+                </div>
+                <div class="result-box gross-box">
+                    <div class="level-tag" id="resGrossLevelTag">Gross: Below L1</div>
+                    <div class="bonus-val" id="resGrossBonusVal">Rs. 0</div>
+                </div>
             </div>
         </div>
 
@@ -527,7 +551,9 @@
                         <td id="totalGrossSum">0</td>
                         <td id="totalApprovedSum">0</td>
                         <td>-</td>
-                        <td id="totalBonusSum">Rs. 0</td>
+                        <td id="totalBonusSum" style="font-size: 13px;">
+                            Appr: <b>Rs. 0</b><br>Gross: <b>Rs. 0</b>
+                        </td>
                         <td></td>
                     </tr>
                 </tfoot>
@@ -705,19 +731,29 @@
 
     function calculateBonusLive() {
         const appVal = parseInt(document.getElementById('approvedSalesInput').value) || 0;
-        const unlockedSlab = getDynamicLevel(appVal);
+        const grossVal = parseInt(document.getElementById('grossSalesInput').value) || 0;
 
-        if (unlockedSlab) {
-            document.getElementById('resLevelTag').innerText = "🎉 " + unlockedSlab.level + " Unlocked!";
-            document.getElementById('resBonusVal').innerText = "Rs. " + unlockedSlab.bonus.toLocaleString();
-            document.getElementById('resMsg').innerText = `Congratulations! You achieved ${appVal} approved sales in ${activeCampaign}.`;
-            renderSlabTable(unlockedSlab.level);
+        const unlockedAppSlab = getDynamicLevel(appVal);
+        const unlockedGrossSlab = getDynamicLevel(grossVal);
+
+        // Approved Preview
+        if (unlockedAppSlab) {
+            document.getElementById('resApprovedLevelTag').innerText = "Appr: " + unlockedAppSlab.level;
+            document.getElementById('resApprovedBonusVal').innerText = "Rs. " + unlockedAppSlab.bonus.toLocaleString();
+            renderSlabTable(unlockedAppSlab.level);
         } else {
-            const cfg = campaignConfig[activeCampaign];
-            document.getElementById('resLevelTag').innerText = "Level Not Achieved";
-            document.getElementById('resBonusVal').innerText = "Rs. 0";
-            document.getElementById('resMsg').innerText = `Minimum ${cfg.baseTarget} approved sales needed for Level 1 bonus in ${activeCampaign}.`;
+            document.getElementById('resApprovedLevelTag').innerText = "Appr: Below L1";
+            document.getElementById('resApprovedBonusVal').innerText = "Rs. 0";
             renderSlabTable(null);
+        }
+
+        // Gross Preview
+        if (unlockedGrossSlab) {
+            document.getElementById('resGrossLevelTag').innerText = "Gross: " + unlockedGrossSlab.level;
+            document.getElementById('resGrossBonusVal').innerText = "Rs. " + unlockedGrossSlab.bonus.toLocaleString();
+        } else {
+            document.getElementById('resGrossLevelTag').innerText = "Gross: Below L1";
+            document.getElementById('resGrossBonusVal').innerText = "Rs. 0";
         }
     }
 
@@ -731,7 +767,7 @@
             return;
         }
 
-        const unlockedSlab = getDynamicLevel(appVal);
+        const unlockedAppSlab = getDynamicLevel(appVal);
 
         salesRecords.push({
             id: Date.now(),
@@ -740,8 +776,8 @@
             campaign: activeCampaign,
             grossSales: grossVal,
             approvedSales: appVal,
-            level: unlockedSlab ? unlockedSlab.level : "Below L1",
-            bonus: unlockedSlab ? unlockedSlab.bonus : 0
+            level: unlockedAppSlab ? unlockedAppSlab.level : "Below L1",
+            bonus: unlockedAppSlab ? unlockedAppSlab.bonus : 0
         });
 
         saveRecordsToStorage();
@@ -759,8 +795,8 @@
         const newDate = prompt("Edit Date (YYYY-MM-DD):", rec.date);
         if (!newDate) return;
 
-        const newGross = prompt(`Edit Gross sales count for ${newDate} (${rec.campaign}):`, rec.grossSales || rec.sales || 0);
-        const newApproved = prompt(`Edit Approved sales count for ${newDate} (${rec.campaign}):`, rec.approvedSales || rec.sales || 0);
+        const newGross = prompt(`Edit Gross sales count for ${newDate} (${rec.campaign}):`, rec.grossSales || 0);
+        const newApproved = prompt(`Edit Approved sales count for ${newDate} (${rec.campaign}):`, rec.approvedSales || 0);
 
         if (newGross !== null && newApproved !== null) {
             const parsedGross = parseInt(newGross) || 0;
@@ -795,7 +831,8 @@
 
         let grandTotalGross = 0;
         let grandTotalApproved = 0;
-        let grandTotalBonus = 0;
+        let grandTotalApprBonus = 0;
+        let grandTotalGrossBonus = 0;
 
         const filteredRecords = salesRecords.filter(r => r.campaign === activeCampaign);
 
@@ -803,7 +840,7 @@
             tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 18px; font-weight:700; color:#777;">No records added yet for ${activeCampaign}.</td></tr>`;
             document.getElementById('totalGrossSum').innerText = "0";
             document.getElementById('totalApprovedSum').innerText = "0";
-            document.getElementById('totalBonusSum').innerText = "Rs. 0";
+            document.getElementById('totalBonusSum').innerHTML = `Appr: <b>Rs. 0</b><br>Gross: <b>Rs. 0</b>`;
             updateMonthlyProgress(0);
             return;
         }
@@ -816,7 +853,13 @@
 
             grandTotalGross += gSales;
             grandTotalApproved += aSales;
-            grandTotalBonus += rec.bonus;
+            grandTotalApprBonus += (rec.bonus || 0);
+
+            // Gross sales ke hisaab se bonus calculate karein row-wise total ke liye
+            const gSlab = getDynamicLevelForCamp(rec.campaign, gSales);
+            const gBonus = gSlab ? gSlab.bonus : 0;
+            grandTotalGrossBonus += gBonus;
+
             const dayName = rec.day || getDayName(rec.date);
 
             const tr = document.createElement('tr');
@@ -827,7 +870,7 @@
                 <td>${gSales.toLocaleString()}</td>
                 <td><strong>${aSales.toLocaleString()}</strong></td>
                 <td><span class="badge-level">${rec.level}</span></td>
-                <td style="color: #2e7d32; font-weight: 800;">Rs. ${rec.bonus.toLocaleString()}</td>
+                <td style="color: #2e7d32; font-weight: 800;">Rs. ${(rec.bonus || 0).toLocaleString()}</td>
                 <td>
                     <button class="btn-action btn-edit" onclick="editRecord(${rec.id})">✏️ Edit</button>
                     <button class="btn-action btn-delete" onclick="deleteRecord(${rec.id})">🗑️ Clear</button>
@@ -838,7 +881,7 @@
 
         document.getElementById('totalGrossSum').innerText = grandTotalGross.toLocaleString();
         document.getElementById('totalApprovedSum').innerText = grandTotalApproved.toLocaleString();
-        document.getElementById('totalBonusSum').innerText = "Rs. " + grandTotalBonus.toLocaleString();
+        document.getElementById('totalBonusSum').innerHTML = `Appr: <b>Rs. ${grandTotalApprBonus.toLocaleString()}</b><br>Gross: <b style="color: #90caf9;">Rs. ${grandTotalGrossBonus.toLocaleString()}</b>`;
 
         updateMonthlyProgress(grandTotalApproved);
     }
