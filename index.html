@@ -168,4 +168,793 @@
             background: var(--primary-blue);
             color: #ffffff;
             border: none;
-            padding:
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+        }
+
+        .btn-submit:hover {
+            background: #0a3880;
+        }
+
+        /* Target Metric Badges */
+        .metric-badge {
+            background: #f5f5f5;
+            padding: 12px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .metric-badge .lbl {
+            font-size: 13px;
+            font-weight: 700;
+            color: #666;
+        }
+
+        .metric-badge .val {
+            font-size: 18px;
+            font-weight: 900;
+            color: var(--primary-blue);
+        }
+
+        /* Monthly Progress Tracker */
+        .progress-box {
+            margin-bottom: 15px;
+            background: #f0f7ff;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #bbdefb;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: #2e7d32;
+            transition: width 0.4s ease;
+        }
+
+        /* Dual Result Display Boxes */
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .result-box {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border: 2px solid #a5d6a7;
+            padding: 14px;
+            border-radius: 14px;
+            text-align: center;
+        }
+
+        .result-box.gross-box {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border: 2px solid #90caf9;
+        }
+
+        .result-box .level-tag {
+            font-size: 11px;
+            font-weight: 800;
+            color: #2e7d32;
+            text-transform: uppercase;
+        }
+
+        .result-box.gross-box .level-tag {
+            color: #0d47a1;
+        }
+
+        .result-box .bonus-val {
+            font-size: 20px;
+            font-weight: 900;
+            color: #1b5e20;
+            margin: 4px 0;
+        }
+
+        .result-box.gross-box .bonus-val {
+            color: #0a2540;
+        }
+
+        /* Tables for Slab Reference */
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            max-height: 440px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+        }
+
+        .slab-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            background: white;
+        }
+
+        .slab-table th, .slab-table td {
+            padding: 10px 12px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .slab-table th {
+            background: #0d47a1;
+            color: #ffffff;
+            font-weight: 800;
+            position: sticky;
+            top: 0;
+        }
+
+        .slab-table tr.active-row {
+            background-color: #fff9c4 !important;
+            font-weight: 900;
+        }
+
+        /* History Table */
+        .history-table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            background: white;
+        }
+
+        .history-table th, .history-table td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .history-table th {
+            background: #f1f5f9;
+            color: #0d47a1;
+            font-weight: 800;
+        }
+
+        .history-table tfoot tr {
+            background-color: #0d47a1;
+            color: #ffffff;
+            font-weight: 900;
+        }
+
+        .history-table tfoot td {
+            padding: 12px;
+            font-size: 13px;
+        }
+
+        .badge-level {
+            background: #ffecb3;
+            color: #b78103;
+            padding: 4px 6px;
+            border-radius: 6px;
+            font-weight: 800;
+            font-size: 11px;
+        }
+
+        .badge-day {
+            background: #e1f5fe;
+            color: #0288d1;
+            padding: 4px 6px;
+            border-radius: 6px;
+            font-weight: 800;
+            font-size: 11px;
+        }
+
+        /* Action Buttons */
+        .btn-action {
+            border: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            margin-right: 4px;
+            transition: opacity 0.2s;
+        }
+
+        .btn-action:hover {
+            opacity: 0.85;
+        }
+
+        .btn-edit {
+            background-color: #ffc107;
+            color: #000;
+        }
+
+        .btn-delete {
+            background-color: #dc3545;
+            color: #fff;
+        }
+
+        .btn-export {
+            background-color: #1976d2;
+            color: #ffffff;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 800;
+            border: none;
+            cursor: pointer;
+        }
+
+        .footer-note {
+            text-align: center;
+            font-size: 12px;
+            color: #888888;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<div class="portal-container">
+    <!-- Header -->
+    <div class="portal-header">
+        <h1>SmartBrains BPO</h1>
+        <p>Dialer Team Bonus & Performance Incentive Portal</p>
+    </div>
+
+    <!-- Campaign Selector Tabs -->
+    <div class="campaign-tabs">
+        <button class="tab-btn active" onclick="switchCampaign('ACA', this)">
+            ACA
+            <span class="sub">Adeel Awan / Laiba</span>
+        </button>
+        <button class="tab-btn" onclick="switchCampaign('HI', this)">
+            HI
+            <span class="sub">Mahanoor</span>
+        </button>
+        <button class="tab-btn" onclick="switchCampaign('Medicare', this)">
+            Medicare
+            <span class="sub">Hamza / Tayyab</span>
+        </button>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="grid-2">
+        <!-- Daily Sales Entry Form -->
+        <div class="card">
+            <div class="card-header-flex">
+                <div class="card-title">
+                    📊 Record Daily Sales ( <span id="activeCampTitle">ACA</span> )
+                </div>
+            </div>
+
+            <div class="metric-badge">
+                <span class="lbl">Daily Target Goal</span>
+                <span class="val" id="dispDailyGoal">831 Sales</span>
+            </div>
+
+            <div class="metric-badge">
+                <span class="lbl">Monthly Target Goal</span>
+                <span class="val" id="dispMonthlyGoal">18,282 Sales</span>
+            </div>
+
+            <!-- Monthly Progress Tracker -->
+            <div class="progress-box">
+                <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:800; color:#0d47a1;">
+                    <span>Monthly Goal Progress (Approved)</span>
+                    <span id="monthlyPctText">0%</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" id="monthlyProgressFill"></div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="saleDate">Select Date</label>
+                <input type="date" id="saleDate" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="grossSalesInput">Enter Gross Sales Count</label>
+                <input type="number" id="grossSalesInput" class="form-control" placeholder="e.g. 1500" oninput="calculateBonusLive()">
+            </div>
+
+            <div class="form-group">
+                <label for="approvedSalesInput">Enter Approved Sales Count</label>
+                <input type="number" id="approvedSalesInput" class="form-control" placeholder="e.g. 1300" oninput="calculateBonusLive()">
+            </div>
+
+            <button class="btn-submit" onclick="saveSalesRecord()">Save Sales Record</button>
+
+            <!-- Dual Dynamic Result Boxes (Approved & Gross Bonus Preview) -->
+            <div class="results-grid">
+                <div class="result-box">
+                    <div class="level-tag" id="resApprovedLevelTag">Appr: Below L1</div>
+                    <div class="bonus-val" id="resApprovedBonusVal">Rs. 0</div>
+                </div>
+                <div class="result-box gross-box">
+                    <div class="level-tag" id="resGrossLevelTag">Gross: Below L1</div>
+                    <div class="bonus-val" id="resGrossBonusVal">Rs. 0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bonus Slab Reference -->
+        <div class="card">
+            <div class="card-header-flex">
+                <div class="card-title">
+                    🏆 Daily Incentive Slab ( <span id="activeSlabTitle">ACA</span> )
+                </div>
+            </div>
+            <div class="table-wrapper">
+                <table class="slab-table">
+                    <thead>
+                        <tr>
+                            <th>Level</th>
+                            <th>Min Sales</th>
+                            <th>Bonus Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="slabTableBody">
+                        <!-- Dynamic Slabs -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Monthly Accumulated History Card -->
+    <div class="card">
+        <div class="card-header-flex">
+            <div class="card-title">
+                🗓️ Recorded Sales History & Total Earned Bonus ( <span id="activeHistTitle">ACA</span> )
+            </div>
+            <button class="btn-export" onclick="exportCSV()">📥 Backup CSV</button>
+        </div>
+        <div class="history-table-wrapper">
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Day</th>
+                        <th>Campaign</th>
+                        <th>Gross Sales</th>
+                        <th>Approved Sales</th>
+                        <th>Level (Appr / Gross)</th>
+                        <th>Earned Bonus</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="historyTableBody">
+                    <!-- History Rows -->
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3">TOTAL ACCUMULATED</td>
+                        <td id="totalGrossSum">0</td>
+                        <td id="totalApprovedSum">0</td>
+                        <td>-</td>
+                        <td id="totalBonusSum">
+                            Appr: <b>Rs. 0</b><br>Gross: <b style="color: #90caf9;">Rs. 0</b>
+                        </td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <div class="footer-note">
+        SmartBrains BPO Confidential - Permanent Data Storage Enabled | Developed by Adeel Awan
+    </div>
+</div>
+
+<script>
+    const campaignConfig = {
+        ACA: {
+            dialer: "Adeel Awan / Laiba",
+            monthlyGoal: 18282,
+            dailyGoal: 831,
+            baseTarget: 800,
+            stepSales: 50,
+            baseBonus: 5000,
+            stepBonus: 1000,
+            slabs: [
+                { level: "Level 1", target: 800, bonus: 5000 },
+                { level: "Level 2", target: 850, bonus: 6000 },
+                { level: "Level 3", target: 900, bonus: 7000 },
+                { level: "Level 4", target: 950, bonus: 8000 },
+                { level: "Level 5", target: 1000, bonus: 9000 },
+                { level: "Level 6", target: 1050, bonus: 10000 },
+                { level: "Level 7", target: 1100, bonus: 11000 },
+                { level: "Level 8", target: 1150, bonus: 12000 },
+                { level: "Level 9", target: 1200, bonus: 13000 },
+                { level: "Level 10", target: 1250, bonus: 14000 }
+            ]
+        },
+        HI: {
+            dialer: "Mahanoor",
+            monthlyGoal: 9328,
+            dailyGoal: 424,
+            baseTarget: 400,
+            stepSales: 50,
+            baseBonus: 5000,
+            stepBonus: 1000,
+            slabs: [
+                { level: "Level 1", target: 400, bonus: 5000 },
+                { level: "Level 2", target: 450, bonus: 6000 },
+                { level: "Level 3", target: 500, bonus: 7000 },
+                { level: "Level 4", target: 550, bonus: 8000 },
+                { level: "Level 5", target: 600, bonus: 9000 },
+                { level: "Level 6", target: 650, bonus: 10000 },
+                { level: "Level 7", target: 700, bonus: 11000 },
+                { level: "Level 8", target: 750, bonus: 12000 },
+                { level: "Level 9", target: 800, bonus: 13000 },
+                { level: "Level 10", target: 850, bonus: 14000 }
+            ]
+        },
+        Medicare: {
+            dialer: "Hamza / Tayyab",
+            monthlyGoal: 45540,
+            dailyGoal: 2070,
+            baseTarget: 2100,
+            stepSales: 200,
+            baseBonus: 5000,
+            stepBonus: 1000,
+            slabs: [
+                { level: "Level 1", target: 2100, bonus: 5000 },
+                { level: "Level 2", target: 2300, bonus: 6000 },
+                { level: "Level 3", target: 2500, bonus: 7000 },
+                { level: "Level 4", target: 2700, bonus: 8000 },
+                { level: "Level 5", target: 2900, bonus: 9000 },
+                { level: "Level 6", target: 3100, bonus: 10000 },
+                { level: "Level 7", target: 3300, bonus: 11000 },
+                { level: "Level 8", target: 3500, bonus: 12000 },
+                { level: "Level 9", target: 3700, bonus: 13000 },
+                { level: "Level 10", target: 3900, bonus: 14000 }
+            ]
+        }
+    };
+
+    let activeCampaign = "ACA";
+    let salesRecords = [];
+
+    function getDayName(dateString) {
+        if(!dateString) return "";
+        const parts = dateString.split('-');
+        if(parts.length === 3) {
+            const d = new Date(parts[0], parts[1] - 1, parts[2]);
+            return d.toLocaleDateString('en-US', { weekday: 'long' });
+        }
+        return new Date(dateString).toLocaleDateString('en-US', { weekday: 'long' });
+    }
+
+    function loadSavedRecords() {
+        const saved = localStorage.getItem('smartbrains_sales_history_v3');
+        if (saved) {
+            try {
+                salesRecords = JSON.parse(saved);
+            } catch(e) {
+                salesRecords = [];
+            }
+        }
+    }
+
+    function saveRecordsToStorage() {
+        localStorage.setItem('smartbrains_sales_history_v3', JSON.stringify(salesRecords));
+    }
+
+    function switchCampaign(campName, btnElement) {
+        activeCampaign = campName;
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        if(btnElement) btnElement.classList.add('active');
+
+        document.getElementById('activeCampTitle').innerText = activeCampaign;
+        document.getElementById('activeSlabTitle').innerText = activeCampaign;
+        document.getElementById('activeHistTitle').innerText = activeCampaign;
+
+        const cfg = campaignConfig[activeCampaign];
+        document.getElementById('dispDailyGoal').innerText = cfg.dailyGoal.toLocaleString() + " Sales";
+        document.getElementById('dispMonthlyGoal').innerText = cfg.monthlyGoal.toLocaleString() + " Sales";
+
+        renderSlabTable();
+        calculateBonusLive();
+        renderHistoryTable();
+    }
+
+    function getDynamicLevelForCamp(camp, sales) {
+        const cfg = campaignConfig[camp];
+        if (!cfg || sales < cfg.baseTarget) return null;
+
+        const steps = Math.floor((sales - cfg.baseTarget) / cfg.stepSales);
+        const levelNum = steps + 1;
+        const target = cfg.baseTarget + (steps * cfg.stepSales);
+        const bonus = cfg.baseBonus + (steps * cfg.stepBonus);
+
+        return {
+            level: "Level " + levelNum,
+            target: target,
+            bonus: bonus
+        };
+    }
+
+    function getDynamicLevel(sales) {
+        return getDynamicLevelForCamp(activeCampaign, sales);
+    }
+
+    function renderSlabTable(activeLevelName = null) {
+        const tbody = document.getElementById('slabTableBody');
+        if(!tbody) return;
+        tbody.innerHTML = '';
+        
+        let slabs = JSON.parse(JSON.stringify(campaignConfig[activeCampaign].slabs));
+
+        const appVal = parseInt(document.getElementById('approvedSalesInput').value) || 0;
+        const dynamicObj = getDynamicLevel(appVal);
+        if (dynamicObj && dynamicObj.bonus > 14000) {
+            let exists = slabs.some(s => s.level === dynamicObj.level);
+            if (!exists) {
+                slabs.push(dynamicObj);
+            }
+        }
+
+        slabs.forEach(s => {
+            const tr = document.createElement('tr');
+            if (activeLevelName === s.level) {
+                tr.className = 'active-row';
+            }
+            tr.innerHTML = `
+                <td><strong>${s.level}</strong></td>
+                <td>${s.target.toLocaleString()}</td>
+                <td>Rs. ${s.bonus.toLocaleString()}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function calculateBonusLive() {
+        const appVal = parseInt(document.getElementById('approvedSalesInput').value) || 0;
+        const grossVal = parseInt(document.getElementById('grossSalesInput').value) || 0;
+
+        const unlockedAppSlab = getDynamicLevel(appVal);
+        const unlockedGrossSlab = getDynamicLevel(grossVal);
+
+        // Approved Preview
+        if (unlockedAppSlab) {
+            document.getElementById('resApprovedLevelTag').innerText = "Appr: " + unlockedAppSlab.level;
+            document.getElementById('resApprovedBonusVal').innerText = "Rs. " + unlockedAppSlab.bonus.toLocaleString();
+            renderSlabTable(unlockedAppSlab.level);
+        } else {
+            document.getElementById('resApprovedLevelTag').innerText = "Appr: Below L1";
+            document.getElementById('resApprovedBonusVal').innerText = "Rs. 0";
+            renderSlabTable(null);
+        }
+
+        // Gross Preview
+        if (unlockedGrossSlab) {
+            document.getElementById('resGrossLevelTag').innerText = "Gross: " + unlockedGrossSlab.level;
+            document.getElementById('resGrossBonusVal').innerText = "Rs. " + unlockedGrossSlab.bonus.toLocaleString();
+        } else {
+            document.getElementById('resGrossLevelTag').innerText = "Gross: Below L1";
+            document.getElementById('resGrossBonusVal').innerText = "Rs. 0";
+        }
+    }
+
+    function saveSalesRecord() {
+        const dateVal = document.getElementById('saleDate').value;
+        const grossVal = parseInt(document.getElementById('grossSalesInput').value) || 0;
+        const appVal = parseInt(document.getElementById('approvedSalesInput').value) || 0;
+
+        if (!dateVal || (grossVal <= 0 && appVal <= 0)) {
+            alert("Please select a valid date and enter sales numbers.");
+            return;
+        }
+
+        const unlockedAppSlab = getDynamicLevel(appVal);
+        const unlockedGrossSlab = getDynamicLevel(grossVal);
+
+        salesRecords.push({
+            id: Date.now(),
+            date: dateVal,
+            day: getDayName(dateVal),
+            campaign: activeCampaign,
+            grossSales: grossVal,
+            approvedSales: appVal,
+            apprLevel: unlockedAppSlab ? unlockedAppSlab.level : "Below L1",
+            apprBonus: unlockedAppSlab ? unlockedAppSlab.bonus : 0,
+            grossLevel: unlockedGrossSlab ? unlockedGrossSlab.level : "Below L1",
+            grossBonus: unlockedGrossSlab ? unlockedGrossSlab.bonus : 0
+        });
+
+        saveRecordsToStorage();
+        renderHistoryTable();
+        document.getElementById('grossSalesInput').value = '';
+        document.getElementById('approvedSalesInput').value = '';
+        calculateBonusLive();
+        alert(`Sales record for ${activeCampaign} saved successfully!`);
+    }
+
+    function editRecord(recordId) {
+        const rec = salesRecords.find(r => r.id === recordId);
+        if (!rec) return;
+
+        const newDate = prompt("Edit Date (YYYY-MM-DD):", rec.date);
+        if (!newDate) return;
+
+        const newGross = prompt(`Edit Gross sales count for ${newDate} (${rec.campaign}):`, rec.grossSales || 0);
+        const newApproved = prompt(`Edit Approved sales count for ${newDate} (${rec.campaign}):`, rec.approvedSales || 0);
+
+        if (newGross !== null && newApproved !== null) {
+            const parsedGross = parseInt(newGross) || 0;
+            const parsedApproved = parseInt(newApproved) || 0;
+
+            rec.date = newDate;
+            rec.day = getDayName(newDate);
+            rec.grossSales = parsedGross;
+            rec.approvedSales = parsedApproved;
+            
+            const unlockedAppSlab = getDynamicLevelForCamp(rec.campaign, parsedApproved);
+            rec.apprLevel = unlockedAppSlab ? unlockedAppSlab.level : "Below L1";
+            rec.apprBonus = unlockedAppSlab ? unlockedAppSlab.bonus : 0;
+
+            const unlockedGrossSlab = getDynamicLevelForCamp(rec.campaign, parsedGross);
+            rec.grossLevel = unlockedGrossSlab ? unlockedGrossSlab.level : "Below L1";
+            rec.grossBonus = unlockedGrossSlab ? unlockedGrossSlab.bonus : 0;
+
+            saveRecordsToStorage();
+            renderHistoryTable();
+        }
+    }
+
+    function deleteRecord(recordId) {
+        if (confirm("Are you sure you want to delete this sales record?")) {
+            salesRecords = salesRecords.filter(r => r.id !== recordId);
+            saveRecordsToStorage();
+            renderHistoryTable();
+        }
+    }
+
+    function renderHistoryTable() {
+        const tbody = document.getElementById('historyTableBody');
+        if(!tbody) return;
+        tbody.innerHTML = '';
+
+        let grandTotalGross = 0;
+        let grandTotalApproved = 0;
+        let grandTotalApprBonus = 0;
+        let grandTotalGrossBonus = 0;
+
+        const filteredRecords = salesRecords.filter(r => r.campaign === activeCampaign);
+
+        if (filteredRecords.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 18px; font-weight:700; color:#777;">No records added yet for ${activeCampaign}.</td></tr>`;
+            document.getElementById('totalGrossSum').innerText = "0";
+            document.getElementById('totalApprovedSum').innerText = "0";
+            document.getElementById('totalBonusSum').innerHTML = `Appr: <b>Rs. 0</b><br>Gross: <b style="color: #90caf9;">Rs. 0</b>`;
+            updateMonthlyProgress(0);
+            return;
+        }
+
+        filteredRecords.sort((a,b) => new Date(b.date) - new Date(a.date));
+
+        filteredRecords.forEach(rec => {
+            const gSales = rec.grossSales !== undefined ? rec.grossSales : (rec.sales || 0);
+            const aSales = rec.approvedSales !== undefined ? rec.approvedSales : (rec.sales || 0);
+
+            grandTotalGross += gSales;
+            grandTotalApproved += aSales;
+
+            // Handle older data compatibility or direct calculation
+            const aBonus = rec.apprBonus !== undefined ? rec.apprBonus : (rec.bonus || 0);
+            const aLvl = rec.apprLevel || rec.level || "Below L1";
+
+            let gBonus = rec.grossBonus;
+            let gLvl = rec.grossLevel;
+            if (gBonus === undefined) {
+                const gSlab = getDynamicLevelForCamp(rec.campaign, gSales);
+                gBonus = gSlab ? gSlab.bonus : 0;
+                gLvl = gSlab ? gSlab.level : "Below L1";
+            }
+
+            grandTotalApprBonus += aBonus;
+            grandTotalGrossBonus += gBonus;
+
+            const dayName = rec.day || getDayName(rec.date);
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>${rec.date}</strong></td>
+                <td><span class="badge-day">${dayName}</span></td>
+                <td><strong>${rec.campaign}</strong></td>
+                <td>${gSales.toLocaleString()}</td>
+                <td><strong>${aSales.toLocaleString()}</strong></td>
+                <td>
+                    Appr: <span class="badge-level">${aLvl}</span><br>
+                    Gross: <span class="badge-level" style="background:#e3f2fd; color:#0d47a1;">${gLvl}</span>
+                </td>
+                <td>
+                    Appr: <b style="color: #2e7d32;">Rs. ${aBonus.toLocaleString()}</b><br>
+                    Gross: <b style="color: #1976d2;">Rs. ${gBonus.toLocaleString()}</b>
+                </td>
+                <td>
+                    <button class="btn-action btn-edit" onclick="editRecord(${rec.id})">✏️ Edit</button>
+                    <button class="btn-action btn-delete" onclick="deleteRecord(${rec.id})">🗑️ Clear</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        document.getElementById('totalGrossSum').innerText = grandTotalGross.toLocaleString();
+        document.getElementById('totalApprovedSum').innerText = grandTotalApproved.toLocaleString();
+        document.getElementById('totalBonusSum').innerHTML = `Appr: <b>Rs. ${grandTotalApprBonus.toLocaleString()}</b><br>Gross: <b style="color: #90caf9;">Rs. ${grandTotalGrossBonus.toLocaleString()}</b>`;
+
+        updateMonthlyProgress(grandTotalApproved);
+    }
+
+    function updateMonthlyProgress(currentTotalApproved) {
+        const goal = campaignConfig[activeCampaign].monthlyGoal;
+        let pct = Math.min(100, Math.round((currentTotalApproved / goal) * 100));
+        document.getElementById('monthlyPctText').innerText = pct + "% (" + currentTotalApproved.toLocaleString() + " / " + goal.toLocaleString() + ")";
+        document.getElementById('monthlyProgressFill').style.width = pct + "%";
+    }
+
+    function exportCSV() {
+        const filteredRecords = salesRecords.filter(r => r.campaign === activeCampaign);
+
+        if (filteredRecords.length === 0) {
+            alert(`No data available to export for ${activeCampaign}.`);
+            return;
+        }
+
+        let csvContent = "data:text/csv;charset=utf-8,Date,Day,Campaign,Gross Sales,Approved Sales,Approved Level,Approved Bonus,Gross Level,Gross Bonus\n";
+        filteredRecords.forEach(r => {
+            const dayName = r.day || getDayName(r.date);
+            const gSales = r.grossSales !== undefined ? r.grossSales : (r.sales || 0);
+            const aSales = r.approvedSales !== undefined ? r.approvedSales : (r.sales || 0);
+            const aBonus = r.apprBonus !== undefined ? r.apprBonus : (r.bonus || 0);
+            const aLvl = r.apprLevel || r.level || "Below L1";
+            
+            const gSlab = getDynamicLevelForCamp(r.campaign, gSales);
+            const gBonus = r.grossBonus !== undefined ? r.grossBonus : (gSlab ? gSlab.bonus : 0);
+            const gLvl = r.grossLevel || (gSlab ? gSlab.level : "Below L1");
+
+            csvContent += `"${r.date}","${dayName}","${r.campaign}",${gSales},${aSales},"${aLvl}",${aBonus},"${gLvl}",${gBonus}\n`;
+        });
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `${activeCampaign}_Sales_Bonus_History.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    window.onload = function() {
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('saleDate').value = today;
+
+        loadSavedRecords();
+        switchCampaign('ACA', document.querySelectorAll('.tab-btn')[0]);
+    };
+</script>
+
+</body>
+</html>
